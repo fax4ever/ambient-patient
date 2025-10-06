@@ -284,7 +284,7 @@ app = gr.mount_gradio_app(app, demo, path="/patient-intake")
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--port", type=int, default=7860,
+    parser.add_argument("--port", type=int, default=7861,
                         help = "Specify the port number for the simple Gradio UI to run at.")
                             
     args = parser.parse_args()

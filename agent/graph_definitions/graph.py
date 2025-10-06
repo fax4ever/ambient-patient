@@ -779,7 +779,7 @@ if save_graph_to_png:
     try:
         save_image_path = "/graph_images/appgraph.png"
         with open(save_image_path, "wb") as png:
-            png.write(full_graph.get_graph(xray=True).draw_mermaid_png(draw_method=MermaidDrawMethod.API))
+            png.write(full_graph.get_graph(xray=True).draw_mermaid_png())
             logger.info(f"Graph PNG saved to {save_image_path}")
     except Exception as ex:
         logger.error(f"Error saving graph to PNG: {ex}")
@@ -795,7 +795,7 @@ app = gr.mount_gradio_app(app, demo, path="/full-assistant")
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("--port", type=int, default=7860,
+    parser.add_argument("--port", type=int, default=7861,
                         help = "Specify the port number for the simple Gradio UI to run at.")
                             
     args = parser.parse_args()

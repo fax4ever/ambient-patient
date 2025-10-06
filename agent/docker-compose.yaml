@@ -19,6 +19,7 @@ services:
       - ./nmgr-config-store:/app/nmgr-config-store
       - ./chain_server:/app/chain_server
       - ./vars.env:/env_vars/vars.env
+      - ./sample_db:/app/sample_db
     shm_size: 5gb
     networks:
       - healthcare-agent-network
@@ -32,11 +33,11 @@ services:
       dockerfile: Dockerfile
     environment:
       - WATCHFILES_FORCE_POLLING=true
-    command: python3 graph_definitions/graph_patient_intake_only.py --port 7860
+    command: python3 graph_definitions/graph_patient_intake_only.py --port 7861
     ports:
-    - "7860:7860"
+    - "7861:7861"
     expose:
-    - "7860"
+    - "7861"
     volumes:
       - ./graph_definitions/graph_images:/graph_images
       - ./app_output_files:/app/app_output_files
@@ -55,19 +56,20 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    command: python3 graph_definitions/graph_appointment_making_only.py --port 7860
+    command: python3 graph_definitions/graph_appointment_making_only.py --port 7861
     environment:
       - WATCHFILES_FORCE_POLLING=true
     ports:
-    - "7860:7860"
+    - "7861:7861"
     expose:
-    - "7860"
+    - "7861"
     volumes:
       - ./graph_definitions/graph_images:/graph_images
       - ./graph_definitions:/app/graph_definitions
       - ./nmgr-config-store:/app/nmgr-config-store
       - ./utils:/app/utils
       - ./vars.env:/env_vars/vars.env
+      - ./sample_db:/app/sample_db
     shm_size: 5gb
     networks:
       - healthcare-agent-network
@@ -79,13 +81,13 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    command: python3 graph_definitions/graph_medication_lookup_only.py --port 7860
+    command: python3 graph_definitions/graph_medication_lookup_only.py --port 7861
     environment:
       - WATCHFILES_FORCE_POLLING=true
     ports:
-    - "7860:7860"
+    - "7861:7861"
     expose:
-    - "7860"
+    - "7861"
     volumes:
       - ./graph_definitions/graph_images:/graph_images
       - ./graph_definitions:/app/graph_definitions
@@ -103,13 +105,13 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    command: python3 graph_definitions/graph.py --port 7860
+    command: python3 graph_definitions/graph.py --port 7861
     environment:
       - WATCHFILES_FORCE_POLLING=true
     ports:
-    - "7860:7860"
+    - "7861:7861"
     expose:
-    - "7860"
+    - "7861"
     volumes:
       - ./graph_definitions/graph_images:/graph_images
       - ./app_output_files:/app/app_output_files

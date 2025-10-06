@@ -119,7 +119,9 @@ It is required to configure each one of these environment variables before proce
 
 - `NEMO_GUARDRAILS_CONFIG_PATH`
 
-    If `NEMO_GUARDRAILS_CONFIG_PATH` is not set, that implies the agent(s) will not be utilizing NeMo Guardrails. If you would like to utilize NeMo Guardrails for safeguarding your application, you can point to the path where your config files are. We provide a few examples of guardrails configuration under the directory [nmgr-config-store](./nmgr-config-store/). `nmgr-config-store/patient-intake-basic-input`, `nmgr-config-store/patient-intake-input-output` and `nmgr-config-store/patient-intake-nemoguard` utilize public NVIDIA AI Endpoint for the LLMs used for guardrails; `nmgr-config-store/patient-intake-nemoguard-self-hosted-nim` assumes local self hosted NemoGuard NIMs.
+    If `NEMO_GUARDRAILS_CONFIG_PATH` is not set, that implies the agent(s) will not be utilizing NeMo Guardrails. If you would like to utilize NeMo Guardrails for safeguarding your application, you can point to the path where your config files are. We provide a few examples for the patient intake scenario under the directory [nmgr-config-store](./nmgr-config-store/). `nmgr-config-store/patient-intake-basic-input`, `nmgr-config-store/patient-intake-input-output` and `nmgr-config-store/patient-intake-nemoguard` utilize public NVIDIA AI Endpoint for the LLMs used for guardrails; `nmgr-config-store/patient-intake-nemoguard-self-hosted-nim` assumes local self hosted NemoGuard NIMs.
+
+    If you're exploring the other agents such as the appointment making agent or medication lookup agent, please create your own configuration for these agents as the examples are meant for the patient intake scenario.
 
  
 - LangSmith configuration: `LANGSMITH_TRACING`, `LANGSMITH_ENDPOINT`, and `LANGSMITH_API_KEY`, `LANGSMITH_PROJECT`
@@ -161,10 +163,10 @@ docker compose up --build patient-intake-ui
 ```
 See [automatic reloading of Gradio UI application](#automatic-reloading-of-gradio-ui-applications) for how the app reloads after file changes.
 
-Next, find the application by going to `http://<your-machine-ip>:7860/patient-intake` in your browser.
+Next, find the application by going to `http://<your-machine-ip>:7861/patient-intake` in your browser.
 
 
-Note this will be running on port 7860 by default. If you need to run on a different port, modify the [`docker-compose.yaml`](./docker-compose.yaml) file's `patient-intake-ui` section and replace all mentions of 7860 with your own port number.
+Note this will be running on port 7861 by default. If you need to run on a different port, modify the [`docker-compose.yaml`](./docker-compose.yaml) file's `patient-intake-ui` section and replace all mentions of 7861 with your own port number.
 
 
 
@@ -187,9 +189,9 @@ docker compose up --build appointment-making-ui
 
 See [automatic reloading of Gradio UI application](#automatic-reloading-of-gradio-ui-applications) for how the app reloads after file changes.
 
-Next, find the application by going to `http://<your-machine-ip>:7860/appointment-making` in your browser.
+Next, find the application by going to `http://<your-machine-ip>:7861/appointment-making` in your browser.
 
-Note this will be running on port 7860 by default. If you need to run on a different port, modify the [`docker-compose.yaml`](./docker-compose.yaml) file's `appointment-making-ui` section and replace all mentions of 7860 with your own port number.
+Note this will be running on port 7861 by default. If you need to run on a different port, modify the [`docker-compose.yaml`](./docker-compose.yaml) file's `appointment-making-ui` section and replace all mentions of 7861 with your own port number.
 
 [Launch the web UI](#25-launch-the-web-ui) on your Chrome browser, you should see the same web interface as above.
 
@@ -208,10 +210,10 @@ docker compose up --build full-agent-ui
 
 See [automatic reloading of Gradio UI application](#automatic-reloading-of-gradio-ui-applications) for how the app reloads after file changes.
 
-Next, find the application by going to `http://<your-machine-ip>:7860/full-assistant` in your browser.
+Next, find the application by going to `http://<your-machine-ip>:7861/full-assistant` in your browser.
 
 
-Note this will be running on port 7860 by default. If you need to run on a different port, modify the [`docker-compose.yaml`](./docker-compose.yaml) file's `full-agent-ui` section and replace all mentions of 7860 with your own port number.
+Note this will be running on port 7861 by default. If you need to run on a different port, modify the [`docker-compose.yaml`](./docker-compose.yaml) file's `full-agent-ui` section and replace all mentions of 7861 with your own port number.
 
 [Launch the web UI](#25-launch-the-web-ui) on your Chrome browser, you should see the same web interface as above.
 
@@ -232,10 +234,10 @@ docker compose up --build medication-lookup-ui
 
 See [automatic reloading of Gradio UI application](#automatic-reloading-of-gradio-ui-applications) for how the app reloads after file changes.
 
-Next, find the application by going to `http://<your-machine-ip>:7860/medication-lookup` in your browser.
+Next, find the application by going to `http://<your-machine-ip>:7861/medication-lookup` in your browser.
 
 
-Note this will be running on port 7860 by default. If you need to run on a different port, modify the [`docker-compose.yaml`](./docker-compose.yaml) file's `medication-lookup-ui` section and replace all mentions of 7860 with your own port number.
+Note this will be running on port 7861 by default. If you need to run on a different port, modify the [`docker-compose.yaml`](./docker-compose.yaml) file's `medication-lookup-ui` section and replace all mentions of 7861 with your own port number.
 
 
 To bring down the medication lookup UI:
