@@ -57,7 +57,9 @@ This blueprint can be run entirely with hosted NVIDIA NIM Microservices without 
 While it can be run without local NIM deployments, we recommend deploying the RIVA ASR and TTS NIMs locally. For this case, please see the modelcards linked below for the GPU requirement.
 
 ### Scenario 2: For running all services locally 
-
+#### Disk Space
+The disk space required in this scenario is 300 GB.
+#### GPU Requirement
 Use | Service(s)| Recommended GPU* 
 --- | --- | --- 
 [RIVA ASR NIM](https://build.nvidia.com/nvidia/parakeet-ctc-1_1b-asr/modelcard) | `nvidia/parakeet-ctc-1_1b-asr` |  1 x various options including L40, A100, and more (see [modelcard](https://build.nvidia.com/nvidia/parakeet-ctc-1_1b-asr/modelcard))
