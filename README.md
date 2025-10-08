@@ -1,5 +1,6 @@
 # Ambient Healthcare Agent for Patients
 ## Overview
+An agentic healthcare front desk can assist patients and healthcare professional staff by reducing the burden of the patient intake process, structuring responses into documentation and thus allowing for more patient-clinical staff quality time. This developer example provides developers with a reference implementation of an voice agent powered by NVIDIA LLM NIM, NVIDIA RIVA ASR and TTS NIM, and NeMo Guardrails. It includes a demonstration of the agent's capabilities in a typical conversation between a patient and a healthcare clinical staff member.
 
 ## Table of Contents
 - [Key Features](#key-features)
@@ -30,7 +31,7 @@ The Ambient Patient developer example provides the following software components
 
 - **Agents**: Implemented in LangGraph, these agents provide an example implementation of utilizing LLMs with tool calling capabilities, creating tools for various healthcare purposes, utilizing the system prompt of the agent to guide agent behavior, and optionally adding guardrails to the LLM. We will mainly focus on the patient intake agent, but there are three other agents available as well. Please see [agent/](./agent/) for more details. The agents are implemented in the graph_*.py files in [agent/graph_definitions/](./agent/graph_definitions). 
 
-- **NeMo Guardrails**: 
+- **NeMo Guardrails**: Safeguards your agentic application and provides highly customizable configurations. Please see [NeMo Guardrails](https://developer.nvidia.com/nemo-guardrails) for more details.
 
 - **Voice UI Frontend**: The voice UI powered by the **NVIDIA ACE Controller SDK** utilizes WebRTC for connection. In the technical diagram, this includes the Web Client component, ACE Controller component, and the RIVA ASR and TTS NIMs. Please see [ace-controller-voice-interface/](./ace-controller-voice-interface/) for more details.
 
@@ -59,8 +60,8 @@ While it can be run without local NIM deployments, we recommend deploying the RI
 
 Use | Service(s)| Recommended GPU* 
 --- | --- | --- 
-[RIVA ASR NIM](https://build.nvidia.com/nvidia/parakeet-ctc-1_1b-asr/modelcard) | `nvidia/parakeet-ctc-1_1b-asr` |  1 x various options including L40, A100, and more (see [modelcard]((https://build.nvidia.com/nvidia/parakeet-ctc-1_1b-asr/modelcard)))
-[RIVA TTS NIM](https://build.nvidia.com/nvidia/magpie-tts-multilingual/modelcard) | `nvidia/magpie-tts-multilingual` | 1 x various options including L40, A100, and more (see [modelcard]((https://build.nvidia.com/nvidia/parakeet-ctc-1_1b-asr/modelcard))) 
+[RIVA ASR NIM](https://build.nvidia.com/nvidia/parakeet-ctc-1_1b-asr/modelcard) | `nvidia/parakeet-ctc-1_1b-asr` |  1 x various options including L40, A100, and more (see [modelcard](https://build.nvidia.com/nvidia/parakeet-ctc-1_1b-asr/modelcard))
+[RIVA TTS NIM](https://build.nvidia.com/nvidia/magpie-tts-multilingual/modelcard) | `nvidia/magpie-tts-multilingual` | 1 x various options including L40, A100, and more (see [modelcard](https://build.nvidia.com/nvidia/parakeet-ctc-1_1b-asr/modelcard))
 Instruct Model for Agentic Orchestration | `llama-3.3-70b-instruct` | 2 x H100 80GB <br /> or <br />4 x A100 80GB
 [NemoGuard Content Safety Model](https://build.nvidia.com/nvidia/llama-3_1-nemoguard-8b-content-safety/modelcard) (Optional for Enabling NeMo Guardrails) | `nvidia/llama-3_1-nemoguard-8b-content-safety` | 1x options including A100, H100, L40S, A6000
 [NemoGuard Topic Control Model](https://build.nvidia.com/nvidia/llama-3_1-nemoguard-8b-topic-control/modelcard) (Optional for Enabling NeMo Guardrails) | `nvidia/llama-3_1-nemoguard-8b-topic-control` | 1x options including A100, H100, L40S, A6000
@@ -68,17 +69,31 @@ Instruct Model for Agentic Orchestration | `llama-3.3-70b-instruct` | 2 x H100 8
 
 *For details on optimized configurations for LLMs, please see the documentation [Supported Models for NVIDIA NIM for LLMs](https://docs.nvidia.com/nim/large-language-models/latest/supported-models.html).
 
+
+
+
 ## Getting Started
 ### Prerequisites
+#### API Keys
 - NVIDIA AI Enterprise developer licence required to local host NVIDIA NIM Microservices.
-- [NVIDIA API Key](https://build.nvidia.com/) for access to hosted NVIDIA NIM Microservices on the public NVIDIA AI Endpoints.
+- [NVIDIA API Key](https://build.nvidia.com/) for access to hosted NVIDIA NIM Microservices on the public NVIDIA AI Endpoints. See [NVIDIA API Keys](./docs/api_keys.md#nvidia-api-key) for detailed steps.
 - [NGC API Key](https://docs.nvidia.com/ngc/latest/ngc-private-registry-user-guide.html#ngc-api-keys) for NGC container download and resources.
 
+#### Software
+
+- Linux operating systems (Ubuntu 22.04 or later recommended)
+- [Docker](https://docs.docker.com/engine/install/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
 ### Deployment Options
 - [Deploy via Docker Compose using public NVIDIA AI Endpoints for NIMs](./docs/docker-compose-deploy-using-public-endpoints.md)
 - [Deploy via Docker Compose using self hosted NIMs](./docs/docker-compose-deploy-using-self-hosted-nims.md)
 
 ## Customization
+
+For customization on the RIVA ASR and TTS options, adding custom TTS IPA dictionary, and exploring other example agents other than the patient intake agent, please see the [Pipeline Customizations](./ace-controller-voice-interface/README.md#pipeline-customizations) section in the ace-controller-voice-interface/README.
+
+For customization on the LLM model, NIM hosting options, agent, system prompt, tools definition, and NeMo Guardrails configurations, please see the document [agent/customization.md](./agent/customization.md).
+
 
 ## License
 

@@ -47,7 +47,7 @@ app-server-healthcare-assistant   app-server-healthcare-assistant:latest   Up 18
 ```
 ### 3. Set Environment Variables for the ace-controller Voice UI
 
-Navigate to the [`ace-controller-voice-interface`](../ace-controller-voice-interface/) directory. Follow this section [Setup API Keys and Configure Service Settings](../ace-controller-voice-interface/README.md#setup-api-keys-and-configure-service-settings) in the ace-controller-voice-interface/README and set the variables in the `ace-controller-voice-interface/.env` file that you have copied over from [`ace-controller-voice-interface/ace_controller.env`](../ace-controller-voice-interface/ace_controller.env).
+Navigate to the [`ace-controller-voice-interface`](../ace-controller-voice-interface/) directory. Follow this section [Setup API Keys and Configure Service Settings](../ace-controller-voice-interface/README.md#setup-api-keys-and-configure-service-settings) in the ace-controller-voice-interface/README and set the variables in  [`ace-controller-voice-interface/ace_controller.env`](../ace-controller-voice-interface/ace_controller.env).
 
 - Set your API Keys
 - Since we're utilizing the public NVIDIA AI Endpoints, we should keep the default `CONFIG_PATH`:

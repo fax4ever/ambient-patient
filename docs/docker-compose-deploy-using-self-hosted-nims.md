@@ -18,7 +18,7 @@ Read through this section [1. Edit the vars.env file to set environment variable
 - Since we are going to self host the agent LLM NIM, set both of the AGENT_LLM_BASE_URL and AGENT_LLM_MODEL differently:
     ```sh
     AGENT_LLM_BASE_URL="http://agent-instruct-llm:8000/v1"
-    AGENT_LLM_MODEL="meta-llama/llama-3.3-70b-instruct"
+    AGENT_LLM_MODEL="meta/llama-3.3-70b-instruct"
     ```
 - If you intend to utilize the NemoGuard NIMs for Nemo Guardrails around your agent LLM, set 
     ```sh
@@ -48,11 +48,12 @@ watch -n 2 'docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}"'
 You should see the name `agent-instruct-lm` in the result:
 ```sh
 NAMES                IMAGE                                            STATUS
-agent-instruct-llm   nvcr.io/nim/meta/llama-3.3-70b-instruct:latest   Up About a minute (health: starting)
+agent-instruct-llm   nvcr.io/nim/meta/llama-3.3-70b-instruct:1.8.5   Up About a minute (health: starting)
 ```
-Note: after the image is pulled, it should take less than 20 minutes for the status of the container to change from starting to healthy.
+Note: after the image is pulled, it should take less than 20 minutes for the status of the container to change from starting to healthy. You can continue to the next steps 3 and 4 while the status is health: starting.
 
 ### 3. Deploy NemoGuard NIMs Locally
+
 If you would like to utilize the NemoGuard NIMs for guardrailing your agent LLM with content safety and topic control, and you have set `NEMO_GUARDRAILS_CONFIG_PATH=nmgr-config-store/patient-intake-nemoguard-self-hosted-nim` in your vars.env file, first set the GPU IDs for the NemoGuard NIMs.
 ```sh
 # if on A100s
@@ -70,14 +71,14 @@ nemoguard-content-safety-llm              nvcr.io/nim/nvidia/llama-3.1-nemoguard
 nemoguard-topic-control-llm               nvcr.io/nim/nvidia/llama-3.1-nemoguard-8b-topic-control:1.10.1    Up 7 minutes (healthy)
 ...
 ```
-Note: after the images are pulled, it should take about 5 minutes for the status of the containers to change from starting to healthy.
+Note: after the images are pulled, it should take about 5 minutes for the status of the containers to change from starting to healthy. You can continue to the next step 4 while the status is health: starting.
 
 ### 4. Deploy Agent Backend App Server
 
  We will be bringing up the `app-server` service in [agent/docker-compose.yaml](../agent/docker-compose.yaml)
 
  Double check that your environment variables are set correctly according to 
- [1. Set Environment Variables for Agent Backend](#1-set-environment-variables-for-agent-backend), then bring up the app-server  service:
+ [1. Set Environment Variables for Agent Backend](../agent#1-edit-the-varsenv-file-to-set-environment-variables), then bring up the app-server service:
  ```sh
  docker compose -f agent/docker-compose.yaml up --build app-server
  # or to detach from docker logs add -d:
@@ -98,10 +99,10 @@ app-server-healthcare-assistant   app-server-healthcare-assistant:latest        
 
 ### 5. Set Environment Variables for the ace-controller Voice UI
 
-Navigate to the [`ace-controller-voice-interface`](../ace-controller-voice-interface/) directory. Follow this section [Setup API Keys and Configure Service Settings](../ace-controller-voice-interface/README.md#setup-api-keys-and-configure-service-settings) in the ace-controller-voice-interface/README and set the variables in the `ace-controller-voice-interface/.env` file that you have copied over from [`ace-controller-voice-interface/ace_controller.env`](../ace-controller-voice-interface/ace_controller.env).
+Navigate to the [`ace-controller-voice-interface`](../ace-controller-voice-interface/) directory. Follow this section [Setup API Keys and Configure Service Settings](../ace-controller-voice-interface/README.md#setup-api-keys-and-configure-service-settings) in the ace-controller-voice-interface/README and set the variables in [`ace-controller-voice-interface/ace_controller.env`](../ace-controller-voice-interface/ace_controller.env).
 
 - Set your API Keys
-- Since we're utilizing the public NVIDIA AI Endpoints, change the default   `CONFIG_PATH` to 
+- Since we're self hosting the RIVA ASR and TTS NIMs and not using the public endpoints, change the default   `CONFIG_PATH` to 
 
     ```sh
     CONFIG_PATH=./configs/config_riva_self_hosting.yaml
@@ -163,5 +164,9 @@ Next, go to `http://<machine-ip>:4400` in your browser to visit the voice UI. Up
 ### 9. Bring down services
 
 ```sh
-docker compose -f agent/docker-compose.yaml  down
+docker compose -f agent/docker-compose.yaml down
+docker compose -f ace-controller-voice-interface/docker-compose.yml down
+# if you just want to stop the RIVA NIMs
+docker compose --profile riva-nims-local -f ace-controller-voice-interface/docker-compose.yml down
+docker volume remove voice-agents-webrtc_nim_cache voice-agents-webrtc_riva_data
 ```

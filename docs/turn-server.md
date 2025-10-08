@@ -20,21 +20,21 @@ echo $HOST_IP_EXTERNAL
 docker run -d --name turn-server --network=host instrumentisto/coturn -n --verbose --log-file=stdout --external-ip=$HOST_IP_EXTERNAL --listening-ip=0.0.0.0 --lt-cred-mech --fingerprint --user=admin:admin --no-multicast-peers --realm=tokkio.realm.org --min-port=51000 --max-port=51010
 ```
 #### Step 2: Modify ace-controller app configuration
-Next, modify the `.env` file and `config.ts` file under `ace-controller-voice-interface`. The `config.ts` file will be utilized in the docker build process for the ui-app container from the webrtc_ui example.
+Next, modify the `ace_controller.env` file and `config.ts` file under `ace-controller-voice-interface`. The `config.ts` file will be utilized in the docker build process for the ui-app container from the webrtc_ui example.
 ```sh
-# check the content of the existing ace-controller-voice-interface/.env
-cat ace-controller-voice-interface/.env
-# add three relevant env vars to ace-controller-voice-interface/.env
-echo -e "\nTURN_USERNAME=admin\nTURN_PASSWORD=admin\nTURN_SERVER_URL=turn:$HOST_IP_EXTERNAL:3478" >> ace-controller-voice-interface/.env
-# check the modified content of the existing ace-controller-voice-interface/.env
-cat ace-controller-voice-interface/.env
+# check the content of the existing ace-controller-voice-interface/ace_controller.env
+cat ace-controller-voice-interface/ace_controller.env
+# add three relevant env vars to ace-controller-voice-interface/ace_controller.env
+echo -e "\n\nTURN_USERNAME=admin\nTURN_PASSWORD=admin\nTURN_SERVER_URL=turn:$HOST_IP_EXTERNAL:3478" >> ace-controller-voice-interface/ace_controller.env
+# check the modified content of the ace-controller-voice-interface/ace_controller.env
+cat ace-controller-voice-interface/ace_controller.env
 ```
 ```sh
 # next check the content of the existing config.ts file
 cat ace-controller-voice-interface/config.ts
 # replace the ice server definition in config.ts
 sed -i "s/export const RTC_CONFIG = {};/export const RTC_CONFIG: ConstructorParameters<typeof RTCPeerConnection>[0] = {\n    iceServers: [\n      {\n        urls: \"turn:$HOST_IP_EXTERNAL:3478\",\n        username: \"admin\",\n        credential: \"admin\",\n      },\n    ],\n  };/" ace-controller-voice-interface/config.ts
-# next check the modified content of the existing config.ts file
+# next check the modified content of the config.ts file
 cat ace-controller-voice-interface/config.ts
 ```
 
