@@ -12,6 +12,9 @@ In this example, we showcase how to build a patient front desk voice agent pipel
 
 
 ## Prerequisites
+### Hardware Requirements
+For the hardware required when choosing to self deploy the RIVA ASR and TTS NIMs, please see the details on the RIVA NIMs in the [ambient-patient/README](../README.md#hardware-requirements).
+
 ### API Keys
 - NVIDIA AI Enterprise developer licence required to local host NVIDIA NIM Microservices.
 - [NVIDIA API Key](https://build.nvidia.com/) for access to hosted NVIDIA NIM Microservices on the public NVIDIA AI Endpoints. See [NVIDIA API Keys](../docs/api_keys.md#nvidia-api-key) for detailed steps.
