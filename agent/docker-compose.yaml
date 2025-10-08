@@ -126,7 +126,7 @@ services:
 
   agent-instruct-llm:
     container_name: agent-instruct-llm
-    image: nvcr.io/nim/meta/llama-3.3-70b-instruct:latest
+    image: nvcr.io/nim/meta/llama-3.3-70b-instruct:1.8.5
     volumes:
     - agent-llm-cache:/opt/nim/.cache
     user: "${USERID}"
