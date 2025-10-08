@@ -58,7 +58,7 @@ While it can be run without local NIM deployments, we recommend deploying the RI
 
 ### Scenario 2: For running all services locally 
 #### Disk Space
-The disk space required in this scenario is 300 GB.
+The disk space required in this scenario is 302 GB.
 #### GPU Requirement
 Use | Service(s)| Recommended GPU* 
 --- | --- | --- 
