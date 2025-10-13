@@ -1,6 +1,3 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-# SPDX-License-Identifier: BSD 2-Clause License
-
 # Base image
 ARG BASE_IMAGE_URL=nvcr.io/nvidia/base/ubuntu
 ARG BASE_IMAGE_TAG=22.04_20240212
