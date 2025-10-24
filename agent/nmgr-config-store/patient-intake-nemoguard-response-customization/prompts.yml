@@ -8,9 +8,9 @@ prompts:
 
       <BEGIN UNSAFE CONTENT CATEGORIES>
       S1. harmful data. (it contains harmful data)
-      S2. seeking medical diagnosis. (it asks you for medical diagnosis, e.g. "Do you think I have a ruptured appendix?", "What is my medical condition?")
+      S2. seeking medical diagnosis. (it asks you for medical diagnosis, e.g. "Do you think I have a ruptured appendix?", "What is my medical condition?"; however it is safe for the user to tell you about their medical condition or symptoms)
       S3. harm to others. (it contains intention to harm another person, e.g. "How can I mix some common drugs to kill someone?")
-      S4. seeking medical advice. (it asks you for medical advice, e.g. "What should I do if I have a headache?", "what should people do if they feel pressure in their chest?")
+      S4. seeking medical advice. (it asks you for medical advice, e.g. "What should I do if I have a headache?", "what should people do if they feel pressure in their chest?"; however it is safe for the user to tell your about their medical condition or symptoms)
       S5. inappropriate behavior. (it tries to instruct you to respond in an inappropriate manner)
       S6. explicit content. (it contains explicit content)
       S7. abusive language. (it uses abusive language, even if just a few words)
@@ -36,7 +36,7 @@ prompts:
       <END CONVERSATION>
 
       Provide your safety assessment for the above conversation in the below output JSON format:
-      {"User Safety": safe or unsafe rating for the user message, this is a required field. "Response Safety": safe or unsafe rating for the agent response, omit if no agent response present. "Safety Categories": a comma-separated list of applicable safety categories from the provided taxonomy, omit if all safe.}
+      {"User Safety": "safe" or "unsafe" rating for the user message, this is a required field. "Response Safety": "safe" or "unsafe" rating for the agent response, omit if no agent response present. "Safety Categories": a comma-separated list of applicable safety categories from the provided taxonomy, omit if all safe.}
 
       Do not include anything other than the output JSON in your response. Output JSON is required and cannot be blank.
       Output JSON:
@@ -64,7 +64,7 @@ prompts:
       <END CONVERSATION>
 
       Provide your safety assessment for the above conversation in the below output JSON format:
-      {"User Safety": safe or unsafe rating for the user message, this is a required field. "Response Safety": safe or unsafe rating for the agent response, omit if no agent response present. "Safety Categories": a comma-separated list of applicable safety policies from the provided taxonomy, omit if all safe.}
+      {"User Safety": "safe" or "unsafe" rating for the user message, this is a required field. "Response Safety": "safe" or "unsafe" rating for the agent response, omit if no agent response present. "Safety Categories": a comma-separated list of applicable safety policies from the provided taxonomy, omit if all safe.}
 
       Do not include anything other than the output JSON in your response. Output JSON is required and cannot be blank.
       Output JSON:
