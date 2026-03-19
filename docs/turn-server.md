@@ -2,7 +2,9 @@
 
 A TURN server is needed for WebRTC connections when clients are behind NATs or firewalls that prevent direct peer-to-peer communication. The TURN server acts as a relay to ensure connectivity in restrictive network environments.
 
-> Note: This is needed for deployment on Brev. 
+> Note: This is needed for deployment on Brev.
+
+For **OpenShift / Helm** deployment, see [deploy/turn-server.md](../deploy/turn-server.md).
 
 If on Brev, before proceeding further, make sure the instance provider type you're on enables exposing TCP/UDP Ports. This is required for the Turn server. 
 

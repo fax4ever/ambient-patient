@@ -1,7 +1,11 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-export const RTC_CONFIG = {};
+export const RTC_CONFIG = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' }
+  ]
+};
 
 const host = window.location.hostname;
 const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';

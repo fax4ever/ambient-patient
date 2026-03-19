@@ -41,6 +41,26 @@ build_ace_controller_pipeline() {
     oc start-build ace-controller-pipeline --from-dir=. --follow || { echo "ERROR: Ace Controller Pipeline build failed"; exit 1; }
 }
 
+# Coturn TURN server (optional; or use image instrumentisto/coturn in values)
+build_coturn() {
+    cd "$REPO_ROOT/deploy/coturn"
+    echo "Building Coturn TURN server"
+    if ! oc get bc coturn &>/dev/null; then
+        oc new-build --name=coturn --binary --strategy=docker || { echo "ERROR: Failed to create BuildConfig for Coturn"; exit 1; }
+    fi
+    oc start-build coturn --from-dir=. --follow || { echo "ERROR: Coturn build failed"; exit 1; }
+}
+
+# Websockify sidecar for TURN over WebSocket (path /turn on same host). Required when route.turnServer.enabled is true.
+build_websockify() {
+    cd "$REPO_ROOT/deploy/websockify"
+    echo "Building Websockify (TURN WebSocket proxy sidecar)"
+    if ! oc get bc websockify &>/dev/null; then
+        oc new-build --name=websockify --binary --strategy=docker || { echo "ERROR: Failed to create BuildConfig for Websockify"; exit 1; }
+    fi
+    oc start-build websockify --from-dir=. --follow || { echo "ERROR: Websockify build failed"; exit 1; }
+}
+
 # ace_controller > ui-app (ui-app in docker-compose)
 build_ace_controller_ui() {
     cd "$REPO_ROOT/ace-controller-voice-interface"
@@ -57,13 +77,17 @@ case "$BUILD_TARGET" in
     app-server)   build_app_server ;;
     ace-controller-pipeline)   build_ace_controller_pipeline ;;
     ace-controller-ui)   build_ace_controller_ui ;;
+    coturn)       build_coturn ;;
+    websockify)   build_websockify ;;
     all)
         build_app_server
         build_ace_controller_pipeline
         build_ace_controller_ui
+        build_coturn
+        build_websockify
         ;;
     *)
-        echo "ERROR: Unknown target '$BUILD_TARGET'. Use: app-server, ace-controller-pipeline, ace-controller-ui, or all (default)."
+        echo "ERROR: Unknown target '$BUILD_TARGET'. Use: app-server, ace-controller-pipeline, ace-controller-ui, coturn, websockify, or all (default)."
         exit 1
         ;;
 esac

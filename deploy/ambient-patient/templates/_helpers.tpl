@@ -61,10 +61,53 @@ UI-app (webrtc-ui) image
 {{- end }}
 
 {{/*
+Turn-server (Coturn) image - always use the built image from the registry
+*/}}
+{{- define "ambient-patient.turnServerImage" -}}
+{{- printf "%s/%s/%s:%s" .Values.images.registry .Values.images.namespace .Values.images.turnServer.repository .Values.images.turnServer.tag }}
+{{- end }}
+
+{{/*
+Websockify sidecar image - use built image from registry when route.turnServer.websockifyImage is not set
+*/}}
+{{- define "ambient-patient.websockifyImage" -}}
+{{- if .Values.route.turnServer.websockifyImage }}
+{{- .Values.route.turnServer.websockifyImage }}
+{{- else }}
+{{- printf "%s/%s/%s:%s" .Values.images.registry .Values.images.namespace .Values.images.websockify.repository .Values.images.websockify.tag }}
+{{- end }}
+{{- end }}
+
+{{/*
 Voice interface hostname - ensures both routes share the same host
 For path-based routing to work, both routes must share the same hostname.
 This requires an explicit host to be set in values.yaml
 */}}
 {{- define "ambient-patient.voiceInterfaceHost" -}}
 {{- required "A valid .Values.route.voiceInterface.host is required for path-based routing!" .Values.route.voiceInterface.host }}
+{{- end }}
+
+{{/*
+Effective TURN server host: when exposed via route (same host + path /turn), use voice interface host; otherwise use turnServer.host
+*/}}
+{{- define "ambient-patient.turnServerHost" -}}
+{{- if and .Values.route.voiceInterface.enabled .Values.route.turnServer.enabled }}
+{{- include "ambient-patient.voiceInterfaceHost" . }}
+{{- else }}
+{{- .Values.turnServer.host }}
+{{- end }}
+{{- end }}
+
+{{/*
+TURN_SERVER_URL for pipeline/UI: when using route, use turn:host:443?transport=tcp (WebSocket path /turn); else turn:host:3478
+*/}}
+{{- define "ambient-patient.turnServerUrl" -}}
+{{- $host := include "ambient-patient.turnServerHost" . }}
+{{- if and .Values.route.voiceInterface.enabled .Values.route.turnServer.enabled }}
+{{- printf "turn:%s:443?transport=tcp" $host }}
+{{- else if $host }}
+{{- printf "turn:%s:3478" $host }}
+{{- else }}
+{{- "" }}
+{{- end }}
 {{- end }}

@@ -52,6 +52,21 @@ spec:
             secretKeyRef:
               name: {{ include "ambient-patient.fullname" . }}-ace-controller-env
               key: REQUEST_TIMEOUT
+        - name: TURN_SERVER_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "ambient-patient.fullname" . }}-ace-controller-env
+              key: TURN_SERVER_URL
+        - name: TURN_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "ambient-patient.fullname" . }}-ace-controller-env
+              key: TURN_USERNAME
+        - name: TURN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "ambient-patient.fullname" . }}-ace-controller-env
+              key: TURN_PASSWORD
         volumeMounts:
         - name: uv-cache
           mountPath: /tmp/uv-cache

@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ambient-patient.fullname" . }}-turn-server
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "ambient-patient.labels" . | nindent 4 }}
+    app.kubernetes.io/component: turn-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "ambient-patient.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: turn-server
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "ambient-patient.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: turn-server
+    spec:
+      {{- if .Values.turnServer.hostNetwork }}
+      # hostNetwork: node's 3478 and relay ports; requires OpenShift hostnetwork SCC unless hostNetwork is false.
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      {{- end }}
+      containers:
+      - name: turn-server
+        image: {{ include "ambient-patient.turnServerImage" . }}
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        ports:
+        - containerPort: 3478
+          protocol: TCP
+          name: turn-tcp
+        - containerPort: 3478
+          protocol: UDP
+          name: turn-udp
+        - containerPort: 51000
+          protocol: UDP
+          name: relay-start
+        - containerPort: 51010
+          protocol: UDP
+          name: relay-end
+        env:
+        - name: TURN_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "ambient-patient.fullname" . }}-turn-server-env
+              key: TURN_USERNAME
+        - name: TURN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "ambient-patient.fullname" . }}-turn-server-env
+              key: TURN_PASSWORD
+        - name: EXTERNAL_IP
+          value: {{ include "ambient-patient.turnServerHost" . | quote }}
+        volumeMounts:
+        - name: coturn-data
+          mountPath: /var/lib/coturn
+        # Run turnserver: use EXTERNAL_IP (turnServer.host) when set, else detect-external-ip (for hostNetwork).
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            exec turnserver -n --verbose --log-file=stdout \
+              --external-ip=$${EXTERNAL_IP:-$$(detect-external-ip)} --relay-ip=$${EXTERNAL_IP:-$$(detect-external-ip)} \
+              --listening-ip=0.0.0.0 --lt-cred-mech --fingerprint \
+              --user=$${TURN_USERNAME}:$${TURN_PASSWORD} \
+              --no-multicast-peers --realm={{ .Values.turnServer.realm | quote }} \
+              --min-port={{ .Values.turnServer.minPort }} --max-port={{ .Values.turnServer.maxPort }}
+        resources:
+          {{- toYaml .Values.resources.turnServer | nindent 10 }}
+      {{- if and .Values.route.voiceInterface.enabled .Values.route.turnServer.enabled }}
+      - name: turn-ws-proxy
+        image: {{ include "ambient-patient.websockifyImage" . }}
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+          name: turn-ws
+        # WebSocket on 8080 -> TURN TCP on localhost:3478 (same pod)
+        args: ["8080", "127.0.0.1:3478"]
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "10m"
+          limits:
+            memory: "64Mi"
+            cpu: "100m"
+      {{- end }}
+      volumes:
+      - name: coturn-data
+        emptyDir: {}

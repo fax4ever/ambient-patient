@@ -18,6 +18,14 @@ images:
   uiApp:
     repository: ace-controller-ui
     tag: latest
+  # Coturn TURN server (build with ./deploy/build-images.sh coturn)
+  turnServer:
+    repository: coturn
+    tag: latest
+  # Websockify sidecar for TURN at path /turn (build with ./deploy/build-images.sh websockify or all)
+  websockify:
+    repository: websockify
+    tag: latest
 
 # Env names match agent/vars.env
 appServer:
@@ -60,6 +68,21 @@ uiApp:
   replicaCount: 1
   port: 4400
 
+# Coturn TURN server for WebRTC (see deploy/turn-server.md).
+# The pipeline and UI use TURN for NAT traversal. When route.turnServer.enabled is true, host is taken from route.voiceInterface.host (path /turn).
+# Otherwise set turnServer.host (e.g. localhost for port-forward, or node public IP when using hostNetwork).
+# Image is the built image from ./deploy/build-images.sh coturn (images.registry/namespace/coturn:latest).
+turnServer:
+  # Host or IP where the browser can reach the TURN server (ignored when route.turnServer.enabled; default localhost for port-forward).
+  host: "localhost"
+  # Set to false to run without hostNetwork (works on OpenShift without hostnetwork SCC). Use port-forward and turnServer.host=localhost.
+  hostNetwork: false
+  username: "admin"
+  password: "admin"
+  realm: "tokkio.realm.org"
+  minPort: 51000
+  maxPort: 51010
+
 resources:
   appServer:
     requests:
@@ -86,9 +109,13 @@ resources:
     requests:
       memory: "128Mi"
       cpu: "50m"
+  turnServer:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
     limits:
-      memory: "512Mi"
-      cpu: "250m"
+      memory: "128Mi"
+      cpu: "100m"
 
 service:
   type: ClusterIP
@@ -100,6 +127,8 @@ service:
     port: 7860
   uiApp:
     port: 4400
+  turnServer:
+    port: 3478
 
 route:
   fullAgentUi:
@@ -112,3 +141,9 @@ route:
     # Then set: voice-interface.<cluster-domain>
     # Example: voice-interface.apps.ai-dev02.kni.syseng.devcluster.openshift.com
     host: "voice-interface.apps.ai-dev02.kni.syseng.devcluster.openshift.com"
+  # TURN server on same host at path /turn (WebSocket proxy to TURN). When enabled, turnServer.host is set from route.voiceInterface.host and TURN_SERVER_URL uses port 443.
+  turnServer:
+    enabled: true
+    path: "/turn"
+    # WebSocket-to-TCP sidecar image. Default: built image from registry (./deploy/build-images.sh websockify). Override if you use an external image.
+    websockifyImage: ""  # empty = use images.registry/namespace/websockify:latest

@@ -7,7 +7,7 @@ NAMESPACE=${NAMESPACE:-ambient-patient}
 RELEASE_NAME=${RELEASE_NAME:-ambient-patient}
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
 
-echo "Deploying Ambient Patient (app-server + full-agent-ui + ace-controller-pipeline)"
+echo "Deploying Ambient Patient (app-server + full-agent-ui + ace-controller-pipeline + turn-server)"
 echo "Namespace: $NAMESPACE"
 echo "Release: $RELEASE_NAME"
 
@@ -18,8 +18,10 @@ if ! oc whoami &> /dev/null; then
 fi
 
 echo "Checking if images exist..."
-oc get imagestream app-server -n $NAMESPACE &>/dev/null || { echo "ERROR: app-server image not found. Run ./deploy/build-images.sh app-server first"; exit 1; }
-oc get imagestream ace-controller-pipeline -n $NAMESPACE &>/dev/null || { echo "ERROR: ace-controller-pipeline image not found. Run ./deploy/build-images.sh ace-controller-pipeline first"; exit 1; }
+oc get imagestream app-server -n $NAMESPACE &>/dev/null || { echo "ERROR: app-server image not found. Run ./deploy/build-images.sh first"; exit 1; }
+oc get imagestream ace-controller-pipeline -n $NAMESPACE &>/dev/null || { echo "ERROR: ace-controller-pipeline image not found. Run ./deploy/build-images.sh first"; exit 1; }
+oc get imagestream coturn -n $NAMESPACE &>/dev/null || { echo "ERROR: coturn image not found. Run ./deploy/build-images.sh first (it builds coturn as part of 'all')"; exit 1; }
+oc get imagestream websockify -n $NAMESPACE &>/dev/null || { echo "ERROR: websockify image not found (required for TURN at path /turn). Run ./deploy/build-images.sh websockify or ./deploy/build-images.sh all"; exit 1; }
 
 # Build Helm set args for API keys (optional env vars)
 SET_ARGS=(
@@ -38,10 +40,13 @@ echo "Installing Helm chart..."
 helm upgrade --install "$RELEASE_NAME" "$SCRIPT_DIR/ambient-patient" "${SET_ARGS[@]}"
 
 echo ""
-echo "✓ Ambient Patient (app-server + full-agent-ui + ace-controller-pipeline) deployed successfully!"
+echo "✓ Ambient Patient (app-server + full-agent-ui + ace-controller-pipeline + turn-server) deployed successfully!"
 echo ""
 echo "Monitor deployment:"
 echo "  oc get pods -n $NAMESPACE -w"
+echo ""
+echo "Deployments (Coturn = $RELEASE_NAME-turn-server):"
+echo "  oc get deploy -n $NAMESPACE"
 echo ""
 echo "Full Agent UI (open in browser):"
 echo "  https://<host>/full-assistant/"

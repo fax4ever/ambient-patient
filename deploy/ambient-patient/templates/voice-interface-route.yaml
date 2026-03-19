@@ -47,4 +47,32 @@ spec:
     termination: edge
     insecureEdgeTerminationPolicy: Redirect
   wildcardPolicy: None
+---
+# Route for TURN server - same host, path /turn (WebSocket proxy to TURN over TCP)
+{{- if and .Values.route.voiceInterface.enabled .Values.route.turnServer.enabled }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ include "ambient-patient.fullname" . }}-turn-server
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "ambient-patient.labels" . | nindent 4 }}
+    app.kubernetes.io/component: turn-server
+  annotations:
+    haproxy.router.openshift.io/rewrite-target: /
+    haproxy.router.openshift.io/timeout-tunnel: 1h
+spec:
+  host: {{ include "ambient-patient.voiceInterfaceHost" . }}
+  path: {{ .Values.route.turnServer.path }}
+  to:
+    kind: Service
+    name: {{ include "ambient-patient.fullname" . }}-turn-server
+    weight: 100
+  port:
+    targetPort: turn-ws
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+{{- end }}
 {{- end }}

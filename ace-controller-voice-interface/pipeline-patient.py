@@ -77,17 +77,15 @@ pcs_map: dict[str, SmallWebRTCConnection] = {}
 contexts_map: dict[str, OpenAILLMContext] = {}
 
 
-ice_servers = (
-    [
+ice_servers = [IceServer(urls="stun:stun.l.google.com:19302")]
+if os.getenv("TURN_SERVER_URL"):
+    ice_servers.append(
         IceServer(
             urls=os.getenv("TURN_SERVER_URL", ""),
             username=os.getenv("TURN_USERNAME", ""),
             credential=os.getenv("TURN_PASSWORD", ""),
         )
-    ]
-    if os.getenv("TURN_SERVER_URL")
-    else []
-)
+    )
 
 
 async def run_bot(webrtc_connection, ws: WebSocket):

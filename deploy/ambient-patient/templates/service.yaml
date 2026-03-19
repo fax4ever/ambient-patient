@@ -77,3 +77,33 @@ spec:
     app.kubernetes.io/name: {{ include "ambient-patient.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/component: ui-app
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ambient-patient.fullname" . }}-turn-server
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "ambient-patient.labels" . | nindent 4 }}
+    app.kubernetes.io/component: turn-server
+spec:
+  type: ClusterIP
+  ports:
+  - port: {{ .Values.service.turnServer.port }}
+    targetPort: 3478
+    protocol: TCP
+    name: turn-tcp
+  - port: {{ .Values.service.turnServer.port }}
+    targetPort: 3478
+    protocol: UDP
+    name: turn-udp
+  {{- if and .Values.route.voiceInterface.enabled .Values.route.turnServer.enabled }}
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+    name: turn-ws
+  {{- end }}
+  selector:
+    app.kubernetes.io/name: {{ include "ambient-patient.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: turn-server
