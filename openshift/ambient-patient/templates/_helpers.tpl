@@ -61,10 +61,20 @@ UI-app (webrtc-ui) image
 {{- end }}
 
 {{/*
-Voice interface hostname - ensures both routes share the same host
-For path-based routing to work, both routes must share the same hostname.
-This requires an explicit host to be set in values.yaml
+Voice interface hostname - ensures both routes share the same host.
+For path-based routing, UI (/) and API (/api) routes must use the same hostname.
+
+Set either:
+  - route.voiceInterface.host — full hostname (fixed; use for legacy single-namespace installs)
+  - route.voiceInterface.clusterDomain — builds voice-interface-<namespace>.<clusterDomain> so multiple namespaces on one cluster get unique hosts
 */}}
 {{- define "ambient-patient.voiceInterfaceHost" -}}
-{{- required "A valid .Values.route.voiceInterface.host is required for path-based routing!" .Values.route.voiceInterface.host }}
+{{- if .Values.route.voiceInterface.host }}
+{{- .Values.route.voiceInterface.host }}
+{{- else if .Values.route.voiceInterface.clusterDomain }}
+{{- $label := printf "voice-interface-%s" .Values.namespace | trunc 63 | trimSuffix "-" }}
+{{- printf "%s.%s" $label .Values.route.voiceInterface.clusterDomain }}
+{{- else }}
+{{- fail "Set route.voiceInterface.clusterDomain (recommended) or route.voiceInterface.host for voice-interface routes. clusterDomain should be the apps subdomain, e.g. apps.my-cluster.openshift.com" }}
+{{- end }}
 {{- end }}

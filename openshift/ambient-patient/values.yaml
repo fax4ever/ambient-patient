@@ -120,8 +120,10 @@ route:
     host: ""  # optional; auto-generated if empty
   voiceInterface:
     enabled: true
-    # REQUIRED for path-based routing: both UI (/) and API (/api) routes must share same hostname
-    # Get your cluster domain: oc get route -n ambient-patient -o jsonpath='{.items[0].spec.host}' | cut -d'.' -f2-
-    # Then set: voice-interface.<cluster-domain>
-    # Example: voice-interface.apps.ai-dev02.kni.syseng.devcluster.openshift.com
-    host: "voice-interface.apps.ai-dev02.kni.syseng.devcluster.openshift.com"
+    # Path-based routing: UI (/) and API (/api) share one hostname. Per-namespace default:
+    #   voice-interface-<namespace>.<clusterDomain>
+    # Get clusterDomain from an existing route, e.g.:
+    #   oc get route -n <ns> -o jsonpath='{.items[0].spec.host}' | cut -d'.' -f2-
+    clusterDomain: "apps.ai-dev02.kni.syseng.devcluster.openshift.com"
+    # Optional: full hostname (overrides clusterDomain + namespace). Use for custom DNS or legacy installs.
+    host: ""
